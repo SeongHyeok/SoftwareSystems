@@ -1,3 +1,11 @@
+/*
+ * cards.c
+ *  from page 37 in Head First C
+ *
+ * Author: SeongHyeok Im (ishez9210@gmail.com)
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
