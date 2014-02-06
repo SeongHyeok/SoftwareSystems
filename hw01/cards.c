@@ -98,7 +98,7 @@ void process()
             continue;
         }
         change_count(val, &count);
-    } //while
+    }
 }
 
 int main()
