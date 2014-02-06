@@ -6,6 +6,12 @@ This modified version requires pandas, numpy, and matplotlib.
 If you use apt:
 
 sudo apt-get install python-pandas python-numpy python-matplotlib
+
+----------
+
+Modified by SeongHyeok Im.
+Date: Feb 05 2014
+
 """
 
 import numpy
@@ -96,7 +102,8 @@ def closed_loop( c, p, tm=5000 ):
 
 # ============================================================
 
-c = Controller( 1.25, 0.01 )
+#c = Controller( 1.25, 0.01 )
+c = Controller( 1.25, 0 )
 p = Buffer( 50, 10 )
 
 # run the simulation
@@ -112,7 +119,5 @@ ys_smooth = pandas.rolling_mean(numpy.array(ys), 20)
 pyplot.plot(ts, rs, color='green', label='target')
 pyplot.plot(ts, ys, color='red', label='queue length')
 pyplot.plot(ts, ys_smooth, color='blue', label='trend')
+pyplot.legend()
 pyplot.show()
-
-
-
