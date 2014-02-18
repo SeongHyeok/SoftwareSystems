@@ -17,7 +17,7 @@ char *tracks[] = {
     "Flamenco Sketches"
 };
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT printf
 #else
@@ -53,24 +53,30 @@ char *strjoin(char *array[], int n)
 // strcpy
 char *strjoin2(char *array[], int n)
 {
-    int i, size = 0;
+    int i;
     char *buf;
+    int *sizes;
 
-    // calculate full size
-    for (i = 0; i < n; ++i) {
-        size += strlen(array[i]);
-        //DEBUG_PRINT("%d / size: %d\n", i, size);
+    sizes = malloc(sizeof(int) * (n + 1));
+    memset(sizes, 0, sizeof(int) * (n + 1));
+
+    // store cumulative sizes
+    for (i = 1; i <= n; ++i) {
+        sizes[i] = sizes[i - 1] + strlen(array[i - 1]);
+        DEBUG_PRINT("i: %d / sizes[%d - 1]: %d / array[%d - 1]: %s\n", i, i, sizes[i - 1], i, array[i - 1]);
     }
 
-    buf = malloc(sizeof(char) * (size + 1));
-    memset(buf, '\0', size + 1);
+    // allocate buffer and set
+    buf = malloc(sizeof(char) * (sizes[n]));
+    memset(buf, '\0', sizes[n - 1]);
 
-    size = 0;
+    // concatenate string by using 'sizes'
     for (i = 0; i < n; ++i) {
-        strcpy((buf + size), array[i]);
-        size += strlen(array[i]);
+        strcpy((buf + sizes[i]), array[i]);
         DEBUG_PRINT("%d / %s\n", i, buf);
     }
+
+    free(sizes);
 
     return buf;
 }
@@ -78,7 +84,10 @@ char *strjoin2(char *array[], int n)
 int main (int argc, char *argv[])
 {
     char *s = strjoin(tracks, 5);
+    char *s2 = strjoin2(tracks, 5);
     printf("strcat / %s\n", s);
-    printf("strcpy / %s\n", strjoin2(tracks, 5));
+    printf("strcpy / %s\n", s2);
+    free(s);
+    free(s2);
     return 0;
 }
