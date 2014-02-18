@@ -37,7 +37,6 @@ void find_track(char search_for[])
 // Finds all tracks that match the given pattern.
 //
 // Prints track number and title.
-
 /*
  * Regular Expression Resources I refered.
  *
@@ -58,7 +57,7 @@ void find_track_regex(char pattern[])
         // Convert error code to error message
         regerror(ret, &regex, buf, 128);
         printf("Error on regcomp(), error message: %s\n", buf);
-        return;
+        exit(1);
     }
     
     for (i = 0; i < NUM_TRACKS; ++i) {
