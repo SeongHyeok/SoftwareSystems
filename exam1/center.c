@@ -18,8 +18,24 @@ License: Creative Commons Attribution-ShareAlike 3.0
 
 char *center(char *s, int n, char fillchar)
 {
-    // FILL THIS IN
-    //    return NULL;
+    char *ret;
+    int size, left, i;
+    
+    size = sizeof(char) * (n + 1);
+    ret = (char *)malloc(size);
+    memset(ret, '\0', size);
+
+    left = (n - strlen(s)) / 2;
+    for (i = 0; i < left; ++i) {
+        ret[i] = fillchar;
+    }
+    for (i = left; i < left + strlen(s); ++i) {
+        ret[i] = s[i - left];
+    }
+    for (i = left + strlen(s); i < n; ++i) {
+        ret[i] = fillchar;
+    }
+    return ret;
 }
 
 
@@ -37,5 +53,10 @@ int main (int argc, char *argv[])
     char *s4 = center("Exam 1", 33, '^');
     printf("%s\n", s4);
 
+    char *s5 = center("steven", 10, '#');
+    printf("%s\n", s5);
+
+    char *s6 = center("allen", 10, '#');
+    printf("%s\n", s6);
     return 0;
 }
