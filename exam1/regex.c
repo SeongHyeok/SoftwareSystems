@@ -42,7 +42,7 @@ void find_track_regex(char *pattern)
 {
     int i, ret;
     regex_t regex;
-    char *msgbuf;
+    char msgbuf[128];
 
     ret = regcomp(&regex, pattern, REG_EXTENDED || REG_NOSUB);
     if (ret) {
