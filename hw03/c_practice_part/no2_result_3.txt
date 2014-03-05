@@ -1,0 +1,8 @@
+dummy 	 0.001000 ms
+dummy 	 0.000000 ms
+dummy2 	 8663.833000 ms
+dummy2 	 8947.105000 ms
+mine 	 8224.472000 ms
+mine 	 7910.317000 ms
+theirs 	 7828.106000 ms
+theirs 	 7752.222000 ms
