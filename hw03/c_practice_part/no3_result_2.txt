@@ -1,0 +1,10 @@
+dummy 	 0.003000 ms
+dummy 	 0.001000 ms
+dummy2 	 8991.277000 ms
+dummy2 	 8532.433000 ms
+my_random_float 	 8582.558000 ms
+my_random_float 	 8520.178000 ms
+my_random_float2 	 17716.754000 ms
+my_random_float2 	 17575.690000 ms
+theirs - random_float 	 8484.168000 ms
+theirs - random_float 	 8394.411000 ms
