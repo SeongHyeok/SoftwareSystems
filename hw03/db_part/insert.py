@@ -214,14 +214,23 @@ if __name__ == "__main__":
     #movie_set = read_movies("./raw_data_from_imdb/movies.list")
 
     # actor_set is a set of (actor, movie, year)
-    #actor_set = read_actors_and_movies("./raw_data_from_imdb/actors.list")
-    #actress_set = read_actors_and_movies("./raw_data_from_imdb/actresses.list")
 
-    #actress_set = read_actors_and_movies("./raw_data_from_imdb/actors.list.1")
-
-    # Clear table
-    execute_query("DELETE FROM `actor_tbl` WHERE 1")
-
+    #actor_set = read_actors_and_movies("./raw_data_from_imdb/actors.list.1", True)
     #insert_actors_and_movies(actor_set)
+    #actor_set = read_actors_and_movies("./raw_data_from_imdb/actors.list.2", False)
+    #insert_actors_and_movies(actor_set)
+    #actor_set = read_actors_and_movies("./raw_data_from_imdb/actors.list.3", False)
+    #insert_actors_and_movies(actor_set)
+    actor_set = read_actors_and_movies("./raw_data_from_imdb/actors.list.4", False)
+    insert_actors_and_movies(actor_set)
+    actor_set = read_actors_and_movies("./raw_data_from_imdb/actors.list.5", False)
+    insert_actors_and_movies(actor_set)
+
+    actress_set = read_actors_and_movies("./raw_data_from_imdb/actresses.list.1", True)
     insert_actors_and_movies(actress_set)
+    actress_set = read_actors_and_movies("./raw_data_from_imdb/actresses.list.2", False)
+    insert_actors_and_movies(actress_set)
+    actress_set = read_actors_and_movies("./raw_data_from_imdb/actresses.list.3", False)
+    insert_actors_and_movies(actress_set)
+
     db.close()
