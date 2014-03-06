@@ -39,15 +39,15 @@ void find_track_regex(char pattern[])
 
     for (i=0; i<NUM_TRACKS; i++) {
         ret = regexec(&regex, tracks[i], 0, NULL, 0);
-	if (!ret) {
-	    printf("Track %i: '%s'\n", i, tracks[i]);
-	} else if (ret == REG_NOMATCH) {
-	    continue;
-	} else {
-           regerror(ret, &regex, msgbuf, sizeof(msgbuf));
-           fprintf(stderr, "Regex match failed: %s\n", msgbuf);
-	   exit(1);
-	}
+    	if (!ret) {
+    	    printf("Track %i: '%s'\n", i, tracks[i]);
+    	} else if (ret == REG_NOMATCH) {
+    	    continue;
+    	} else {
+               regerror(ret, &regex, msgbuf, sizeof(msgbuf));
+               fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+    	   exit(1);
+    	}
     }
 
     /* I'm not sure this is necessary, but it's possible that if you
