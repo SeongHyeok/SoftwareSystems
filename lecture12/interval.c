@@ -25,8 +25,8 @@ char *convert_time(time_t t) {
         exit(EXIT_FAILURE);
     }
  
-    //return c_time_string;
-    return strdup(c_time_string);
+    //return c_time_string; // c_time has an internal storage
+    return strdup(c_time_string);   // copy to new chunk of memory
 }
 
 // Interval definition
@@ -38,19 +38,30 @@ typedef struct {
 // Returns a new Interval with the given start and end times.
 // If unable to allocate, prints an error message and exits.
 Interval *make_interval(time_t start, time_t end) {
-    // fill this in
-    return NULL;
+    Interval *res = NULL;
+    res = (Interval *)malloc(sizeof(Interval));
+    if (res == NULL) {
+        fprintf(stderr, "Failure to allocate memory.");
+        exit(EXIT_FAILURE);
+    }
+
+    res->start = start;
+    res->end = end;
+
+    return res;
 }
 
 // Computes the duration of an Interval using difftime.
 double interval_duration(Interval *interval) {
-    // fill this in
-    return 0.0;
+    //double d = interval->end - interval->start;
+    //return d;
+    // ref: http://www.cplusplus.com/reference/ctime/difftime/
+    return difftime(interval->end, interval->start);
 }
 
 // Frees an Interval.
 void free_interval(Interval *interval) {
-    // fill this in
+    free(interval);
 }
 
 // Prints an interval in local time.
