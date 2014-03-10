@@ -25,6 +25,10 @@ Rational *make_rational(int numer, int denom) {
 
 // Computes a floating-point approximation of a Rational.
 double rational_to_double(Rational *rational) {
+    if (rational->denom != 0) {
+        printf("Divide by 0 occurs!!");
+        return 0;
+    }
     return (double)rational->numer / (double)rational->denom;
 }
 
