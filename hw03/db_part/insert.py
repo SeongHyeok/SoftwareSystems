@@ -191,11 +191,7 @@ def execute_query(q):
         print "Query -->", q
         sys.exit(1)
 
-def insert_actors_and_movies(data_set):import pygame
-from pygame.locals import *
-import random
-import math
-import time
+def insert_actors_and_movies(data_set):
     q = "INSERT INTO `actor_tbl` (actor_name, movie_name, year) VALUES ('%s', '%s', '%s')"
     print "# Start querying"
     data = list(data_set)
