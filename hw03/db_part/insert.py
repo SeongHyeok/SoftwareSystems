@@ -191,7 +191,11 @@ def execute_query(q):
         print "Query -->", q
         sys.exit(1)
 
-def insert_actors_and_movies(data_set):
+def insert_actors_and_movies(data_set):import pygame
+from pygame.locals import *
+import random
+import math
+import time
     q = "INSERT INTO `actor_tbl` (actor_name, movie_name, year) VALUES ('%s', '%s', '%s')"
     print "# Start querying"
     data = list(data_set)
@@ -214,6 +218,7 @@ if __name__ == "__main__":
     #movie_set = read_movies("./raw_data_from_imdb/movies.list")
 
     # actor_set is a set of (actor, movie, year)
+    # I split original list file into several ones because of memory error.
 
     #actor_set = read_actors_and_movies("./raw_data_from_imdb/actors.list.1", True)
     #insert_actors_and_movies(actor_set)
