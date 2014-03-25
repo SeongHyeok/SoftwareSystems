@@ -17,14 +17,14 @@ License: Creative Commons Attribution-ShareAlike 3.0
 typedef struct {
     enum Type {INT, STRING} type;
     union {
-	int i;
-	char *s;
+    	int i;
+    	char *s;
     };
 } Value;
 
 
 /* Makes a Value object that contains an int. */
-Value *make_int_value(int i) 
+Value *make_int_value(int i)
 {
     Value *value = (Value *) malloc (sizeof (Value));
     value->type = INT;
@@ -34,7 +34,7 @@ Value *make_int_value(int i)
 
 
 /* Makes a Value object that contains a string. */
-Value *make_string_value(char *s) 
+Value *make_string_value(char *s)
 {
     Value *value = (Value *) malloc (sizeof (Value));
     value->type = STRING;
@@ -44,19 +44,19 @@ Value *make_string_value(char *s)
 
 
 /* Prints a value object. */
-void print_value (Value *value) 
+void print_value (Value *value)
 {
     if (value == NULL) {
         printf ("%p", value);
-	return;
+        return;
     }
     switch (value->type) {
     case INT:
-	printf ("%d", value->i);
-	break;
+    	printf ("%d", value->i);
+    	break;
     case STRING:
-	printf ("%s", value->s);
-	break;
+    	printf ("%s", value->s);
+    	break;
     }
 }
 
@@ -80,7 +80,7 @@ typedef struct {
 
 
 /* Makes a Hashable object. */
-Hashable *make_hashable(void *key, 
+Hashable *make_hashable(void *key,
 			int (*hash) (void *),
 			int (*equal) (void *, void *)
 			)
@@ -116,8 +116,8 @@ int hash_string(void *p)
     int i = 0;
 
     while (s[i] != 0) {
-	total += s[i];
-	i++;
+    	total += s[i];
+    	i++;
     }
     return total;
 }
@@ -133,15 +133,18 @@ int hash_hashable(Hashable *hashable)
 /* Compares integers. */
 int equal_int (void *ip, void *jp)
 {
-    // FIX ME!
-    return 0;
+    int *p1 = ip;
+    int *p2 = jp;
+    return (*p1 == *p2);
 }
 
 
 /* Compares strings. */
 int equal_string (void *s1, void *s2)
 {
-    // FIX ME!
+    if (strcmp(s1, s2) == 0) {
+        return 1;
+    }
     return 0;
 }
 
@@ -149,12 +152,11 @@ int equal_string (void *s1, void *s2)
 /* Compares Hashables. */
 int equal_hashable(Hashable *h1, Hashable *h2)
 {
-    // FIX ME!
-    return 0;
+    return h1->equal(h1->key, h2->key);
 }
 
 
-/* Makes a Hashable int. 
+/* Makes a Hashable int.
 
 Allocates space and copies the int.
 */
@@ -166,7 +168,7 @@ Hashable *make_hashable_int (int x)
 }
 
 
-/* Makes a Hashable string. 
+/* Makes a Hashable string.
 
 Stores a reference to the string (not a copy).
 */
@@ -189,8 +191,11 @@ typedef struct node {
 /* Makes a Node. */
 Node *make_node(Hashable *key, Value *value, Node *next)
 {
-    // FIX ME!
-    return NULL;
+    Node *node = (Node *)malloc(sizeof(Node));
+    node->key = key;
+    node->value = value;
+    node->next = next;
+    return node;
 }
 
 
@@ -206,7 +211,12 @@ void print_node(Node *node)
 /* Prints all the Nodes in a list. */
 void print_list(Node *node)
 {
-    // FIX ME!
+    Node *current = node;
+
+    while (current != NULL) {
+        print_node(current);
+        current = current->next;
+    }
 }
 
 
@@ -223,7 +233,13 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 /* Looks up a key and returns the corresponding value, or NULL */
 Value *list_lookup(Node *list, Hashable *key)
 {
-    // FIX ME!
+    Node *current = list;
+    while (current != NULL) {
+        if (current->key->equal(current->key, key->key)) {
+            return current->value;
+        }
+        current = current->next;
+    }
     return NULL;
 }
 
@@ -239,8 +255,10 @@ typedef struct map {
 /* Makes a Map with n lists. */
 Map *make_map(int n)
 {
-    // FIX ME!
-    return NULL;
+    Map *map = (Map *)malloc(sizeof(Map));
+    map->n = n;
+    //
+    return map;
 }
 
 
@@ -250,10 +268,10 @@ void print_map(Map *map)
     int i;
 
     for (i=0; i<map->n; i++) {
-	if (map->lists[i] != NULL) {
-	    printf ("%d\n", i);
-	    print_list (map->lists[i]);
-	}
+    	if (map->lists[i] != NULL) {
+    	    printf ("%d\n", i);
+    	    print_list (map->lists[i]);
+    	}
     }
 }
 
@@ -261,7 +279,7 @@ void print_map(Map *map)
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    // FIX ME!
+    //map->lists
 }
 
 
