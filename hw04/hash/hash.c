@@ -10,6 +10,14 @@ License: Creative Commons Attribution-ShareAlike 3.0
 #include <string.h>
 
 
+//#define DEBUG_FLAG
+#ifdef DEBUG_FLAG
+#define DEBUG_PRINT printf("[DEBUG] ");printf
+#else
+#define DEBUG_PRINT(...)
+#endif
+
+
 // VALUE: represents a value in a key-value pair
 
 /* Here's one way of making a polymorphic object in C */
@@ -234,12 +242,15 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 Value *list_lookup(Node *list, Hashable *key)
 {
     Node *current = list;
+    DEBUG_PRINT("list_lookup() Enter\n");
     while (current != NULL) {
-        if (current->key->equal(current->key, key->key)) {
+        DEBUG_PRINT("%s / %s\n", (char *)current->key->key, (char *)key->key);
+        if (current->key->equal(current->key->key, key->key)) {
             return current->value;
         }
         current = current->next;
     }
+    DEBUG_PRINT("list_lookup() Leave\n");
     return NULL;
 }
 
@@ -255,9 +266,50 @@ typedef struct map {
 /* Makes a Map with n lists. */
 Map *make_map(int n)
 {
-    Map *map = (Map *)malloc(sizeof(Map));
+
+    /*map = (Map *)malloc(sizeof(Map));
+    Node *node = (Node *)malloc(sizeof(Node) * n);
+    int i;
+
+    DEBUG_PRINT("make_map() Enter\n");
+    DEBUG_PRINT("ptr size: %ld / alloc size: %ld\n", sizeof(int *), sizeof(Node) * n);
+
     map->n = n;
-    //
+    DEBUG_PRINT("n set\n");
+    map->lists = &node;
+    DEBUG_PRINT("lists set\n");
+    for (i = 0; i < n; ++i) {
+        DEBUG_PRINT("%d\n", i);
+        map->lists[i]->key = NULL;
+        DEBUG_PRINT("k\n");
+        map->lists[i]->value = NULL;
+        DEBUG_PRINT("v\n");
+        if (i > 0) {
+            map->lists[i - 1]->next = map->lists[i];
+            DEBUG_PRINT("n\n");
+        }
+        DEBUG_PRINT("%d\n", i);
+    }
+
+    DEBUG_PRINT("make_map() Leave\n");*/
+
+    /////////////
+
+    Map *map = (Map *)malloc(sizeof(Map));
+    int i;
+
+    DEBUG_PRINT("make_map() Enter\n");
+
+    map->n = n;
+    map->lists = (Node **)malloc(sizeof(Node *) * n);
+
+    DEBUG_PRINT("lists: %p\n", map->lists);
+    for (i = 0; i < n; ++i) {
+        DEBUG_PRINT("[%d]:%p\n", i, map->lists[i]);
+    }
+
+    DEBUG_PRINT("make_map() Leave\n");
+
     return map;
 }
 
@@ -267,27 +319,37 @@ void print_map(Map *map)
 {
     int i;
 
-    for (i=0; i<map->n; i++) {
+    DEBUG_PRINT("print_map() Enter\n");
+
+    for (i = 0; i < map->n; i++) {
+        DEBUG_PRINT("i: %d / lists[%d]: %p\n", i, i, map->lists[i]);
     	if (map->lists[i] != NULL) {
-    	    printf ("%d\n", i);
+    	    DEBUG_PRINT("not NULL in [%d]\n", i);
     	    print_list (map->lists[i]);
     	}
     }
+
+    DEBUG_PRINT("print_map() Leave\n");
 }
 
 
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    //map->lists
+    // decide index of map
+    int hash = hash_hashable(key);
+    int idx = hash % map->n;
+    Node *node = prepend(key, value, map->lists[idx]);
+    map->lists[idx] = node;
 }
 
 
 /* Looks up a key and returns the corresponding value, or NULL. */
 Value *map_lookup(Map *map, Hashable *key)
 {
-    // FIX ME!
-    return NULL;
+    int idx = hash_hashable(key) % map->n;
+    Value *val = list_lookup(map->lists[idx], key);
+    return val;
 }
 
 
