@@ -62,21 +62,21 @@ int remove_by_value(Node **head, int val) {
     Node *victim;
 
     if (node == NULL) {
-	return 0;
+        return 0;
     }
 
     if (node->val == val) {
-	pop(head);
-	return 1;
+        pop(head);
+        return 1;
     }
 
     for(; node->next != NULL; node = node->next) {
-	if (node->next->val == val) {
-	    victim = node->next;
-	    node->next = victim->next;
-	    free(victim);
-	    return 1;
-	}
+        if (node->next->val == val) {
+            victim = node->next;
+            node->next = victim->next;
+            free(victim);
+            return 1;
+        }
     }
     return 0;
 }
@@ -87,17 +87,17 @@ void reverse(Node **head) {
     Node *next, *temp;
 
     if (node == NULL || node->next == NULL) {
-	return;
+        return;
     }
 
     next = node->next;
     node->next = NULL;
 
     while (next != NULL) {
-	temp = next->next;
-	next->next = node;
-	node = next;
-	next = temp;
+        temp = next->next;
+        next->next = node;
+        node = next;
+        next = temp;
     }
     *head = node;
 }
@@ -107,7 +107,30 @@ void reverse(Node **head) {
 // element between the first and second elements.
 // Returns 0 if successful, -1 if the index is out of range.
 int insert_by_index(Node **head, int val, int index) {
-    // FILL THIS IN
+    Node *prev = NULL;
+    Node *curr = NULL;
+    int cnt = 1;
+
+    if (index == 0) {
+        push(head, val);
+        return 0;
+    }
+
+    prev = *head;
+    curr = prev->next;
+    while (1) {
+        if (cnt == index) {
+            // prev->curr
+            // prev-> new -> curr
+            prev->next = make_node(val, curr);
+        }
+        if (curr == NULL) {
+            break;
+        }
+        prev = curr;
+        curr = curr->next;
+        ++cnt;
+    }
     return -1;
 }
 
@@ -129,12 +152,17 @@ int main() {
     Node *test_list = make_node(2, NULL);
     test_list->next = make_node(4, NULL);
     test_list->next->next = make_node(6, NULL);
+    // : 2-4-6
 
     // insert the odd numbers
     insert_by_index(&test_list, 1, 0);
+    // : 1-2-4-6
     insert_by_index(&test_list, 3, 2);
+    // : 1-2-3-4-6
     insert_by_index(&test_list, 5, 4);
+    // : 1.2.3.4.5.6
     insert_by_index(&test_list, 7, 6);
+    // : 1-2-3-4-5-6-7
 
     // this index is out of bounds; should return -1
     int res = insert_by_index(&test_list, 9, 8);
