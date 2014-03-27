@@ -123,6 +123,7 @@ int insert_by_index(Node **head, int val, int index) {
             // prev->curr
             // prev-> new -> curr
             prev->next = make_node(val, curr);
+            return 0;
         }
         if (curr == NULL) {
             break;
