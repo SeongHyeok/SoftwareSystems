@@ -18,17 +18,17 @@
 
  */
 
-/*
- * Global Variables
- */
+/*****************************************************************************/
+/* Global Variables */
+/*****************************************************************************/
 
-int ledPin = 5;     // select the pin for the LED
+const int ledPin = 5;     // select the pin for the LED
 
 // Changed for my circuit
 //int buttonPin1 = 2;
 //int buttonPin2 = 3;
-int buttonPin1 = 3;
-int buttonPin2 = 2;
+const int buttonPin1 = 3;
+const int buttonPin2 = 2;
 
 int low = 36;
 int high = 255;
@@ -37,6 +37,11 @@ int stride = 3;
 int counter = low;
 
 #define ENABLE_BITWISE_OPERATION
+
+
+/*****************************************************************************/
+/* Functions */
+/*****************************************************************************/
 
 /*
  * printPORT()
@@ -94,11 +99,6 @@ void writeByte(int x)
 
 #endif
 
-void buttonFunc()
-{
-    OCR0A += 10;
-}
-
 /*
  * setup()
  */
@@ -108,6 +108,10 @@ void setup()
 
     Serial.begin(9600);
 
+    // external interrupt
+    attachInterrupt(0, timeUp, FALLING);
+    attachInterrupt(1, timeDown, FALLING);
+
     pinMode(buttonPin1, INPUT_PULLUP);
     pinMode(buttonPin2, INPUT_PULLUP);
 
@@ -116,10 +120,6 @@ void setup()
     for (i = 6; i <= 13; ++i) {
         pinMode(i, OUTPUT);
     }
-
-    // external interrupt
-
-    attachInterrupt(0, buttonFunc, FALLING);
 
     // timer interrupt
 
@@ -148,6 +148,17 @@ ISR(TIMER0_COMPA_vect)
         counter = low;
     }
     writeByte(counter);
+}
+
+void timeUp()
+{
+    //Serial.println("ButtonFunc!");
+    OCR0A += 10;
+}
+
+void timeDown()
+{
+    OCR0A -= 10;
 }
 
 /*
