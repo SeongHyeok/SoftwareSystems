@@ -35,7 +35,7 @@ int pop(Node **head) {
     int retval;
     Node *next_node;
 
-    if (*head == NULL) {
+    if (*head == NULL) {    // empty list
         return -1;
     }
 
@@ -49,19 +49,56 @@ int pop(Node **head) {
 
 // Add a new element to the beginning of the list.
 void push(Node **head, int val) {
-    // FILL THIS IN!
+    Node *node = make_node(val, *head);
+    *head = node;
+
+    //*head = make_node(val, *head);
 }
 
 // Remove the first element with the given value; return the number
 // of nodes removed.
 int remove_by_value(Node **head, int val) {
-    // FILL THIS IN!
-    return 0;
+    Node *current = *head;
+    Node *previous = NULL;
+    int cnt = 0;
+
+    while (current != NULL) {
+        if (current->val == val) {
+            if (previous != NULL) {
+                previous->next = current->next;
+                free(current);
+            }
+            else {  // previous == NULL, means current is head
+                pop(head);
+            }
+            ++cnt;
+            break;  // remove the first element only as stated
+        }
+        previous = current;
+        current = current->next;
+    }
+    return cnt;
 }
 
 // Reverse the elements of the list without allocating new nodes.
 void reverse(Node **head) {
-    // FILL THIS IN!
+    Node *current = NULL;
+    Node *previous = NULL;
+
+    if (*head == NULL) {
+        return;
+    }
+
+    current = (*head)->next;
+    previous = (*head);
+
+    while (current != NULL) {
+        Node *next = current->next;
+
+
+        previous = current;
+        current = current->next;
+    }
 }
 
 
