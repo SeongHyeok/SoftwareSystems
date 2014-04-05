@@ -11,8 +11,25 @@
 #define DEBUG_PRINT(...)
 #endif
 
+/*****************************************************************************/
+/* Global Variables */
+/*****************************************************************************/
+
 GError *err = NULL;
 
+/*****************************************************************************/
+/* Utility Functions */
+/*****************************************************************************/
+
+gchar *stripPunctuation(gchar *str)
+{
+	/* Implement Here! */
+	return str;
+}
+
+/*****************************************************************************/
+/* Functions */
+/*****************************************************************************/
 
 GString *getContent(gchar *file_name)
 {
@@ -41,14 +58,50 @@ GString *getContent(gchar *file_name)
 	return content;
 }
 
+GSequence *getFilteredWordSequence(gchar **words)
+{
+    GSequence *sequence;
+    gchar **ptr;
+
+    sequence = g_sequence_new(g_free);
+
+    for (ptr = words; *ptr; ++ptr) {
+    	gchar *new_word;
+    	//DEBUG_PRINT("word in : [%s]\n", *ptr);
+
+    	// Filter 0 size
+    	if (g_utf8_strlen(*ptr, -1) == 0) {
+    		continue;
+    	}
+    	// Strip punctuations
+    	new_word = stripPunctuation(*ptr);
+
+    	// Add to sequence
+        g_sequence_append(sequence, g_strdup(new_word));
+
+        DEBUG_PRINT("word out: [%s]\n", new_word);
+    }
+
+    return sequence;
+}
+
 void process(gchar *file_name)
 {
 	GString *content;
+	gchar **words;
+	GSequence *filtered_words;
 
 	DEBUG_PRINT("File Name: %s\n", file_name);
 
+	// Read file content
 	content = getContent(file_name);
-	DEBUG_PRINT("%s", content->str);
+	//DEBUG_PRINT("%s", content->str);
+
+	// Split content to words
+	words = g_strsplit(content->str, " ", 0);
+
+	// Filter words
+	filtered_words = getFilteredWordSequence(words);
 }
 
 int main(gint argc, gchar *argv[])
