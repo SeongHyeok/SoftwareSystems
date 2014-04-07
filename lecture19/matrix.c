@@ -18,8 +18,34 @@ typedef struct {
 
 // Makes a new matrix and sets all elements to zero.
 Matrix *make_matrix(int rows, int cols) {
-    // Fill this in
-    return NULL;
+    Matrix *matrix;
+    int i;
+
+    matrix = (Matrix *)calloc(1, sizeof(Matrix));
+    if (matrix == NULL) {
+        fprintf(stderr, "Error: failed to allocated matrix\n");
+        return NULL;
+    }
+
+    // map->lists = (Node **)malloc(sizeof(Node *) * n);
+    matrix->data = (double **)calloc(rows, sizeof(double *));
+    if (matrix->data == NULL) {
+        fprintf(stderr, "Error: failed to allocated matrix\n");
+        return NULL;
+    }
+
+    for (i = 0; i < rows; ++i) {
+        matrix->data[i] = (double *)calloc(cols, sizeof(double));
+        if (matrix->data[i] == NULL) {
+            fprintf(stderr, "Error: failed to allocated matrix\n");
+            return NULL;
+        }
+    }
+
+    matrix->rows = rows;
+    matrix->cols = cols;
+
+    return matrix;
 }
 
 // Prints the elements of a matrix.
@@ -27,10 +53,10 @@ void print_matrix(Matrix *matrix) {
     int i, j;
 
     for (i=0; i<matrix->rows; i++) {
-	for (j=0; j<matrix->cols; j++) {
-	    printf("%lf ", matrix->data[i][j]);
-	}
-	printf("\n");
+    	for (j=0; j<matrix->cols; j++) {
+    	    printf("%lf ", matrix->data[i][j]);
+    	}
+    	printf("\n");
     }
 }
 
@@ -39,9 +65,9 @@ void increment_matrix(Matrix *matrix, int incr) {
     int i, j;
 
     for (i=0; i<matrix->rows; i++) {
-	for (j=0; j<matrix->cols; j++) {
-	    matrix->data[i][j] += incr;
-	}
+    	for (j=0; j<matrix->cols; j++) {
+    	    matrix->data[i][j] += incr;
+    	}
     }
 }
 
@@ -50,9 +76,9 @@ void consecutive_matrix(Matrix *matrix) {
     int i, j;
 
     for (i=0; i<matrix->rows; i++) {
-	for (j=0; j<matrix->cols; j++) {
-	    matrix->data[i][j] = i * matrix->cols + j;
-	}
+    	for (j=0; j<matrix->cols; j++) {
+    	    matrix->data[i][j] = i * matrix->cols + j;
+    	}
     }
 }
 
@@ -65,9 +91,9 @@ void add_matrix(Matrix *A, Matrix *B, Matrix *C) {
     assert(A->cols == B->cols && B->cols == C->cols);
 
     for (i=0; i<A->rows; i++) {
-	for (j=0; j<A->cols; j++) {
-	    C->data[i][j] =  A->data[i][j] + B->data[i][j];
-	}
+    	for (j=0; j<A->cols; j++) {
+    	    C->data[i][j] =  A->data[i][j] + B->data[i][j];
+    	}
     }
 }
 
@@ -81,18 +107,38 @@ Matrix *add_matrix_func(Matrix *A, Matrix *B) {
 // Performs matrix multiplication and stores the result in the given
 // destination matrix (C).
 void mult_matrix(Matrix *A, Matrix *B, Matrix *C) {
-    // Fill this in
-    // Note that it is asking for matrix multiplication, not
-    // elementwise multiplication
+    int i, j, k, sum;
+    int rows, cols;
+
+    rows = C->rows;
+    cols = C->cols;
+
+    for (i = 0; i < rows; ++i) {
+        sum = 0;
+        for (j = 0; j < cols; ++j) {
+            C->data[i][j] = sum;
+        }
+    }
 }
 
 // Performs matrix multiplication and returns a new matrix.
 Matrix *mult_matrix_func(Matrix *A, Matrix *B) {
-    // Fill this in
-    return NULL;
+    Matrix *result_matrix;
+
+    if (A->cols != B->rows) {
+        fprintf(stderr, "Error: given matrices cannot be multiplied\n");
+        return NULL;
+    }
+
+    result_matrix = make_matrix(A->rows, B->cols);
+
+    mult_matrix(A, B, result_matrix);
+
+    return result_matrix;
 }
 
-int main() {
+int main(void)
+{
     Matrix *A = make_matrix(3, 4);
     consecutive_matrix(A);
     printf("A\n");
