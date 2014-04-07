@@ -4,7 +4,8 @@
 #include <glib/gstring.h>
 #include <gio/gio.h>
 
-#define DEBUG
+//#define DEBUG
+
 #ifdef DEBUG
 #define DEBUG_PRINT	g_printf
 #else
@@ -16,6 +17,11 @@
 /*****************************************************************************/
 
 GError *err = NULL;
+
+typedef struct pair {
+	gchar *str;
+	gint num;
+} pair_t;
 
 /*****************************************************************************/
 /* Utility Functions */
@@ -59,6 +65,48 @@ GString *stripPunctuationAndLower(gchar *input)
 	g_string_append(output, "\0");
 
 	return output;
+}
+
+pair_t *new_struct_pair(gchar *str, gint num)
+{
+	pair_t *new_pair;
+
+	new_pair = g_malloc(sizeof(pair_t));
+	if (new_pair == NULL) {
+		fprintf(stderr, "Error: failed to allocate memory\n");
+		return NULL;
+	}
+
+	new_pair->str = g_strdup(str);
+	new_pair->num = num;
+
+	return new_pair;
+}
+
+void free_struct_pair(pair_t *data)
+{
+	g_free(data->str);
+	g_free(data);
+}
+
+static gint compare_struct_pair(gconstpointer a, gconstpointer b, gpointer data)
+{
+	// Reference: http://web.mit.edu/barnowl/src/glib/glib-2.16.3/tests/sequence-test.c
+	pair_t *p1, *p2;
+	gint n1, n2;
+	p1 = (pair_t *)a;
+	p2 = (pair_t *)b;
+	n1 = p1->num;
+	n2 = p2->num;
+	if (n1 == n2) {
+		return 0;
+	}
+	else if (n1 > n2) {
+		return 1;
+	}
+	else if (n1 < n2) {
+		return -1;
+	}
 }
 
 /*****************************************************************************/
@@ -105,7 +153,7 @@ GSequence *getFilteredWordSequence(gchar **words)
 
     for (ptr = words; *ptr; ++ptr) {
     	GString *new_word;
-    	DEBUG_PRINT("word in : [%s]\n", *ptr);
+    	//DEBUG_PRINT("word in : [%s]\n", *ptr);
 
     	// Filter 0 size
     	if (g_utf8_strlen(*ptr, -1) == 0) {
@@ -116,7 +164,7 @@ GSequence *getFilteredWordSequence(gchar **words)
 
     	// Add to sequence
         g_sequence_append(sequence, g_strdup(new_word->str));
-        DEBUG_PRINT("word out: [%s]\n", new_word->str);
+        //DEBUG_PRINT("word out: [%s]\n", new_word->str);
 
         g_string_free(new_word, TRUE);
     }
@@ -124,25 +172,110 @@ GSequence *getFilteredWordSequence(gchar **words)
     return sequence;
 }
 
+GSequence *getFrequencySequence(GSequence *word_sequence)
+{
+	GSequence *sequence;
+	GSequenceIter *iter, *iter2;
+	pair_t *pair;
+	gchar *word, *word2;
+
+	sequence = g_sequence_new(free_struct_pair);
+
+	// GSequence iteration
+	// Reference: https://lists.connman.net/pipermail/connman/2013-June/014534.html
+
+	iter = g_sequence_get_begin_iter(word_sequence);
+	while (g_sequence_iter_is_end(iter) == FALSE) {
+		gboolean found = 0;
+		word = g_sequence_get(iter);
+		//DEBUG_PRINT("word: [%s]\n", word);
+
+		// check word list
+		iter2 = g_sequence_get_begin_iter(sequence);
+		while (g_sequence_iter_is_end(iter2) == FALSE) {
+			pair = g_sequence_get(iter2);
+			word2 = pair->str;
+			//DEBUG_PRINT("word2: [%s]\n", word2);
+			// if word found, break
+			if (g_strcmp0(word, word2) == 0) {
+				found = 1;
+				break;
+			}
+			iter2 = g_sequence_iter_next(iter2);
+		}
+
+		if (found) {	// if found, increase frequency
+			//DEBUG_PRINT("found\n");
+			++(pair->num);
+		}
+		else { // if not found, add word
+			//DEBUG_PRINT("not found, added [%s]\n", word);
+			pair = new_struct_pair(word, 1);
+			g_sequence_append(sequence, pair);
+		}
+
+		iter = g_sequence_iter_next(iter);
+	}
+
+	g_sequence_sort(sequence, compare_struct_pair, NULL);
+
+	// test code
+#ifdef DEBUG
+	iter = g_sequence_get_begin_iter(sequence);
+	while (g_sequence_iter_is_end(iter) == FALSE) {
+		pair = g_sequence_get(iter);
+		printf("word: [%s] / num: [%d]\n", pair->str, pair->num);
+		iter = g_sequence_iter_next(iter);
+	}
+#endif
+
+	return sequence;
+}
+
+void printFrequencySequence(GSequence *sequence)
+{
+	GSequenceIter *iter;
+	pair_t *pair;
+
+	iter = g_sequence_get_begin_iter(sequence);
+	while (g_sequence_iter_is_end(iter) == FALSE) {
+		pair = g_sequence_get(iter);
+		printf("word: [%s] / num: [%d]\n", pair->str, pair->num);
+		iter = g_sequence_iter_next(iter);
+	}
+}
+
 void process(gchar *file_name)
 {
 	GString *content;
 	gchar **words;
 	GSequence *word_sequence;
+	GSequence *freq_sequence;
 
 	DEBUG_PRINT("File Name: %s\n", file_name);
 
 	// Read file content
 	content = getContent(file_name);
 	//DEBUG_PRINT("%s", content->str);
+	DEBUG_PRINT("Get content completed.\n");
 
 	// Split content to words
 	words = g_strsplit(content->str, " ", 0);
+	DEBUG_PRINT("Split content completed.\n");
 
 	// Filter words and store to sequence
 	word_sequence = getFilteredWordSequence(words);
+	DEBUG_PRINT("Filter word completed.\n");
+
+	// Create sorted frequency sequence from word sequence
+	freq_sequence = getFrequencySequence(word_sequence);
+	DEBUG_PRINT("Calculate freq completed.\n");
+
+	// Print it!
+	printFrequencySequence(freq_sequence);
 
 	// Free resources
+	g_sequence_free(freq_sequence);
 	g_sequence_free(word_sequence);
 	g_strfreev(words);
 	g_string_free(content, TRUE);
